@@ -1,35 +1,41 @@
 import flet as ft
+from ai_motors.config.model_config import get_model
 
-def build_info_panel(verified: bool = False, version: str = "No verificado") -> ft.Container:
+
+def build_info_panel(verified: bool = False, version: str = "No verificado", saludo: str = "No verificado") -> ft.Container:
     """
-    Construye un panel de Información.
-    
-    Parámetros:
-      verified: Si True, se muestra el panel habilitado (opacidad 1.0, ícono verde).
-                Si False, se muestra deshabilitado (opacidad 0.5, ícono rojo).
-      version:  Versión de Python a mostrar en caso de verificación exitosa.
+    Construye un panel de Información que muestra:
+      - La versión de Python verificada manualmente.
+      - El modelo configurado obtenido con get_model().
+      - Un saludo obtenido de la ejecución del agente de saludo.
+
+    Si todos los elementos están verificados correctamente, el panel se muestra
+    habilitado (opacidad 1.0 e ícono verde). En caso contrario, se muestra con
+    opacidad reducida (0.5) y un ícono rojo indicando error.
     """
-    if verified:
-        display_version = version
-        icon_color = ft.colors.GREEN
-        opacity_value = 1.0
-    else:
-        display_version = "No verificado"
-        icon_color = ft.colors.RED
-        opacity_value = 0.5
 
-    info_text = ft.Text(f"Versión de Python: {display_version}", size=16)
-    status_icon = ft.Icon(name=ft.icons.CHECK_CIRCLE, color=icon_color, size=30)
+    # -----------------------------
+    # Verificación Global
+    # -----------------------------
+    final_verified = verified and saludo is not None and "Error" not in saludo
+    icon_color = ft.colors.GREEN if final_verified else ft.colors.RED
+    opacity_value = 1.0 if final_verified else 0.5
 
+    # -----------------------------
+    # Creación del Panel
+    # -----------------------------
     return ft.Container(
         content=ft.Column(
             controls=[
                 ft.Text("Información del Sistema", size=20, weight="bold"),
-                info_text,
-                status_icon,
+                ft.Text(f"✅ Versión de Python: {version}", size=16),
+                ft.Text(f"🤖 Modelo configurado: {get_model()}", size=16),
+                ft.Text(f"💬 Saludo del agente: {saludo}", size=16),
+                ft.Icon(name=ft.icons.CHECK_CIRCLE, color=icon_color, size=30),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10
         ),
         expand=True,
         bgcolor=ft.colors.LIGHT_BLUE,
