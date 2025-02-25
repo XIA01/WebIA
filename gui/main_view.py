@@ -1,4 +1,8 @@
 import flet as ft
+
+# Por ejemplo, supongamos que en 'ai_motors.agents.tools.canvas_tool' tenemos la función
+from ai_motors.agents.tools.canvas_tools import get_system_info, saludador
+
 from gui.components.buttons.exit_button import create_exit_button
 from gui.components.panels.info_panel import build_info_panel
 from gui.components.panels.canvas_panel import build_canvas_panel
@@ -39,6 +43,7 @@ def main_view(page: ft.Page):
 
     # Paneles
     info_panel_container = build_info_panel()
+    # Inicialmente, el canvas se construye con 100 bits en 0 (10x10), lo que se mostrará como una cuadrícula negra.
     canvas_panel_container = build_canvas_panel(verified=False)
     prompt_panel_container = build_prompt_panel(verified=False)
     agent_panel_container = build_agent_panel(verified=False)
@@ -47,21 +52,17 @@ def main_view(page: ft.Page):
     status_text = ft.Text("", size=20, weight="bold", color="blue600")
 
     def verify_info(e):
-        # 1) Deshabilitar botón y mostrar texto
         verify_info_button.disabled = True
         status_text.value = "Verificando..."
         page.update()
 
-        # 2) Ejecutar verificación real
         is_py, version = verify_python()
         saludo = obtener_saludo()
 
-        # 3) Actualizar el panel con el resultado
         new_panel = build_info_panel(verified=is_py, version=version, saludo=saludo)
         info_panel_container.content = new_panel.content
         info_panel_container.opacity = new_panel.opacity
 
-        # 4) Si hubo error, volvemos a habilitar el botón; si fue correcto, lo dejamos deshabilitado
         if not is_py:
             status_text.value = "Error al verificar. ¡Intenta de nuevo!"
             verify_info_button.disabled = False
@@ -70,26 +71,36 @@ def main_view(page: ft.Page):
 
         page.update()
 
+    
+
     def verify_canvas(e):
         verify_canvas_button.disabled = True
         status_text.value = "Verificando GPU..."
         page.update()
 
-        # Lógica de verificación de GPU (ejemplo simulado)
         new_panel = build_canvas_panel(verified=True)
-        canvas_panel_container.content = new_panel.content
+        new_panel.expand = True  # Aseguramos que el panel use el espacio disponible
+
+        # Envolvemos el nuevo panel en un contenedor con dimensiones y clip definidos
+        constrained_container = ft.Container(
+            content=new_panel,
+            width=canvas_panel_container.width or 1000,    # Define un ancho fijo o usa el ancho del contenedor padre
+            height=canvas_panel_container.height or 300,  # Define una altura fija o usa el alto del contenedor padre
+            # clip_behavior=ft.ClipBehavior.HARD_EDGE  # Corta el contenido que se salga
+        )
+        
+        canvas_panel_container.content = constrained_container
         canvas_panel_container.opacity = new_panel.opacity
 
-        # Suponiendo que es exitoso, lo dejamos deshabilitado; si fallara, re-habilitaríamos
-        status_text.value = "GPU Verificada con éxito"
+        status_text.value = "¡GPU Verificados!"
         page.update()
+
 
     def verify_prompt(e):
         verify_prompt_button.disabled = True
         status_text.value = "Verificando Prompt..."
         page.update()
 
-        # Lógica de verificación (aquí solo simulamos)
         new_panel = build_prompt_panel(verified=True, prompt_text="Ejemplo de prompt")
         prompt_panel_container.content = new_panel.content
         prompt_panel_container.opacity = new_panel.opacity
@@ -102,7 +113,6 @@ def main_view(page: ft.Page):
         status_text.value = "Verificando Agentes..."
         page.update()
 
-        # Lógica simulada de verificación de agentes
         new_panel = build_agent_panel(verified=True)
         agent_panel_container.content = new_panel.content
         agent_panel_container.opacity = new_panel.opacity
@@ -110,7 +120,7 @@ def main_view(page: ft.Page):
         status_text.value = "¡Agentes Verificados!"
         page.update()
 
-    # Botones de verificación
+    # Botones
     verify_info_button = ft.ElevatedButton("Verificar Info", on_click=verify_info)
     verify_canvas_button = ft.ElevatedButton("Verificar GPU", on_click=verify_canvas)
     verify_prompt_button = ft.ElevatedButton("Verificar Prompt", on_click=verify_prompt)
@@ -122,14 +132,12 @@ def main_view(page: ft.Page):
         spacing=10
     )
 
-    # Fila con botón Salir y texto de estado
     exit_row = ft.Row(
         controls=[create_exit_button(page), status_text],
         alignment=ft.MainAxisAlignment.CENTER,
         spacing=30
     )
 
-    # Layout principal
     row_top = ft.Row(
         controls=[info_panel_container, canvas_panel_container],
         expand=True,
@@ -149,9 +157,7 @@ def main_view(page: ft.Page):
 
     page.add(main_layout)
 
-
 def update_panel(panel_container, panel_builder, *args):
-    # Esta función puede usarse si quieres reutilizar la lógica de cambio en paneles.
     new_panel = panel_builder(verified=True, *args)
     panel_container.content = new_panel.content
     panel_container.opacity = new_panel.opacity
