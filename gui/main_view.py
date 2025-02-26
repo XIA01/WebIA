@@ -1,3 +1,4 @@
+# gui/main_view.py
 import flet as ft
 from gui.components.buttons.exit_button import create_exit_button
 from gui.components.panels.info_panel import build_info_panel
@@ -6,7 +7,11 @@ from gui.components.panels.prompt_panel import build_prompt_panel
 from gui.components.panels.agent_panel import build_agent_panel
 from gui.components.verifiers.python_verifier import verify_python
 
+# Variable global para almacenar la referencia al TextField del prompt.
+prompt_text_field = None
+
 def main_view(page: ft.Page):
+    global prompt_text_field  # para poder asignarla desde verify_canvas
     page.title = "Proyecto de Agentes"
     page.vertical_alignment = "center"
     page.horizontal_alignment = "center"
@@ -36,7 +41,7 @@ def main_view(page: ft.Page):
         alignment=ft.alignment.center
     )
 
-    # Inicializamos los paneles con un placeholder (vacío o con mensaje)
+    # Inicializamos los paneles con un placeholder
     info_panel_container = ft.Container(
         content=ft.Text("Info pendiente de verificación", size=16),
         expand=True,
@@ -53,6 +58,7 @@ def main_view(page: ft.Page):
         alignment=ft.alignment.center,
         opacity=0.5
     )
+    # El panel de prompt se inicializa con un mensaje de placeholder.
     prompt_panel_container = ft.Container(
         content=ft.Text("Prompt pendiente de verificación", size=16),
         expand=True,
@@ -80,7 +86,6 @@ def main_view(page: ft.Page):
         page.update()
 
         is_py, version = verify_python()
-        
         new_panel = build_info_panel(verified=is_py, version=version)
         info_panel_container.content = new_panel.content
         info_panel_container.opacity = new_panel.opacity
@@ -101,9 +106,7 @@ def main_view(page: ft.Page):
         page.update()
 
         new_panel = build_canvas_panel(verified=True)
-        new_panel.expand = True  # Aseguramos que el panel use el espacio disponible
-
-        # Opcional: si necesitas un contenedor con dimensiones fijas
+        new_panel.expand = True
         constrained_container = ft.Container(
             content=new_panel,
             width=canvas_panel_container.width or 1000,
@@ -113,29 +116,46 @@ def main_view(page: ft.Page):
         canvas_panel_container.opacity = new_panel.opacity
 
         status_text.value = "¡GPU Verificada!"
-        # Habilitamos el siguiente botón
+        # Al verificar GPU, construimos el panel de prompt y guardamos la referencia al TextField.
+        prompt_panel, prompt_field = build_prompt_panel(verified=True, prompt="")
+        prompt_panel_container.content = prompt_panel.content
+        prompt_panel_container.opacity = prompt_panel.opacity
+        # Guardamos el TextField globalmente para luego obtener su valor.
+        global prompt_text_field
+        prompt_text_field = prompt_field
+
+        # Habilitamos el botón para verificar el prompt
         verify_prompt_button.disabled = False
         page.update()
 
     def verify_prompt(e):
         verify_prompt_button.disabled = True
-        status_text.value = "Verificando Prompt..."
+        status_text.value = "Enviando prompt al agente..."
         page.update()
 
-        new_panel = build_prompt_panel(verified=True, prompt_text="Ejemplo de prompt")
-        prompt_panel_container.content = new_panel.content
-        prompt_panel_container.opacity = new_panel.opacity
+        # Obtenemos el prompt ingresado en el TextField
+        prompt_value = prompt_text_field.value if prompt_text_field else ""
+        
+        # Aquí llamas al agente pasándole el prompt. Ejemplo:
+        # from ai_motors.agents.tools.agent_tool import responder
+        # response = responder(prompt_value)
+        # Suponemos que la respuesta la obtenemos de esta manera:
+        # agent_response = response.messages[-1]["content"]
+        # Para este ejemplo simularemos una respuesta:
+        agent_response = f"Agente responde a: {prompt_value}"
 
-        status_text.value = "¡Prompt Verificado!"
-        # Habilitamos el siguiente botón
+        status_text.value = "¡Prompt enviado y respuesta recibida!"
+        page.update()
+
+        # Habilitamos el siguiente botón para los agentes (si deseas usarlo para mostrar la respuesta)
         verify_agents_button.disabled = False
-        page.update()
 
     def verify_agents(e):
         verify_agents_button.disabled = True
         status_text.value = "Verificando Agentes..."
         page.update()
 
+        # En este ejemplo, podrías actualizar el panel de agentes con la respuesta obtenida.
         new_panel = build_agent_panel(verified=True)
         agent_panel_container.content = new_panel.content
         agent_panel_container.opacity = new_panel.opacity
