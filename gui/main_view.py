@@ -136,19 +136,16 @@ def main_view(page: ft.Page):
         # Obtenemos el prompt ingresado en el TextField
         prompt_value = prompt_text_field.value if prompt_text_field else ""
         
-        # Aquí llamas al agente pasándole el prompt. Ejemplo:
-        # from ai_motors.agents.tools.agent_tool import responder
-        # response = responder(prompt_value)
-        # Suponemos que la respuesta la obtenemos de esta manera:
-        # agent_response = response.messages[-1]["content"]
-        # Para este ejemplo simularemos una respuesta:
-        agent_response = f"Agente responde a: {prompt_value}"
-
+        # Llamamos al pipeline pasándole el prompt y obtenemos la respuesta del agente.
+        from ai_motors.agents.product_manager.product_pipeline import run_product_pipeline
+        agent_response = run_product_pipeline(prompt_value)
+        
         status_text.value = "¡Prompt enviado y respuesta recibida!"
         page.update()
 
         # Habilitamos el siguiente botón para los agentes (si deseas usarlo para mostrar la respuesta)
         verify_agents_button.disabled = False
+
 
     def verify_agents(e):
         verify_agents_button.disabled = True
