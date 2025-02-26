@@ -1,10 +1,10 @@
 import flet as ft
-from ai_motors.agents.tools.canvas_tools import client, ram, gpu, vram,saludador
+from ai_motors.agents.tools.canvas_tools import client, ram, gpu, vram,agente_analista
 def build_canvas_panel(verified: bool = False) -> ft.Container:
     if verified:
         global client
         response = client.run(
-            agent=saludador,
+            agent=agente_analista,
             messages=[{"role": "user", "content": "Hola"}],
             context_variables={"name": "ente biológico inteligente", "ram": ram, "gpu": gpu, "vram": vram}
         )

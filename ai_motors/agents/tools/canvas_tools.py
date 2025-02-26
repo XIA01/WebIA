@@ -57,7 +57,7 @@ Tu tarea es:
 Devuelve un mensaje final que combine esta información."""
 
 
-saludador = Agent(
+agente_analista = Agent(
     model="qwen2.5-coder:14b",  # Utiliza tu modelo de 14B
     name="Agente analista de sistema",
     instructions=instrucciones

@@ -14,14 +14,12 @@ def instrucciones_saludo(context_variables):
     """
     print(context_variables)
     name = context_variables.get("name", "Usuario")
+    print(name)
     return f"""
-    Eres un agente de saludo. Recibes las siguientes variables de contexto:
-      - "name": {name}.
+    Eres un agente de saludo.      
     
-    Tu tarea es saludar al usuario de manera cordial, indicando que el sistema funciona correctamente.
-    
-    Devuelve un mensaje final que combine esta información, por ejemplo:
-      "Hola {name}, soy un agente de saludo. El sistema funciona correctamente."
+    Tu tarea es saludar al usuario de nombre: '{name}', de manera cordial, indicando que el sistema funciona correctamente y hay agentes corriendo en el sistema.
+    No ofrescas asistencia, simplemente indicale que el sistema tiene agentes corriendo, por lo tanto funciona bien!
     """
 
 # Definición del agente de saludo usando el modelo de 14B
@@ -36,6 +34,6 @@ if __name__ == "__main__":
     response = client.run(
         agent=saludador,
         messages=[{"role": "user", "content": "Salúdame"}],
-        context_variables={"name": "Juan"}
+        context_variables={"name": "ente biologico pensante"}
     )
     print(response.messages[-1]["content"])

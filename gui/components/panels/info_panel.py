@@ -2,7 +2,7 @@ import flet as ft
 from ai_motors.config.model_config import get_model
 
 
-def build_info_panel(verified: bool = False, version: str = "No verificado", saludo: str = "No verificado") -> ft.Container:
+def build_info_panel(verified: bool = False, version: str = "No verificado") -> ft.Container:
     """
     Construye un panel de Información que muestra:
       - La versión de Python verificada manualmente.
@@ -13,7 +13,16 @@ def build_info_panel(verified: bool = False, version: str = "No verificado", sal
     habilitado (opacidad 1.0 e ícono verde). En caso contrario, se muestra con
     opacidad reducida (0.5) y un ícono rojo indicando error.
     """
+    
+    from ai_motors.agents.test_agents.agente_saludo import client,saludador
 
+    response = client.run(
+        agent=saludador,
+        messages=[{"role": "user", "content": "Salúdame"}],
+        context_variables={"name": "ente biologico pensante"}
+    )
+    
+    saludo = response.messages[-1]["content"]
     # -----------------------------
     # Verificación Global
     # -----------------------------
