@@ -31,6 +31,42 @@ agente_lider_de_producto = Agent(
     instructions=instrucciones_lider_de_producto
 )
 
+
+def corrector_instrucciones_lider_de_producto(context_variables):
+    documento_anterior = context_variables.get("documento_anterior", "")
+  
+    f"""
+    Eres un agente Líder de Producto / Product Manager.
+
+    Tu tarea era recibir el requerimiento del cliente (contenido en el prompt) y generar un informe final sellado que contenga:
+      - Resumen Ejecutivo: Una descripción concisa de la visión general del proyecto.
+      - Objetivos: Una lista de objetivos específicos y medibles.
+      - Alcance: Definición clara de lo que se incluye y lo que se excluye en el proyecto.
+      - Restricciones: Limitaciones tecnológicas y operativas (Solo usar HTML, CSS y JavaScript).
+
+    Tu informe a sido revisado por control de calidad y ha encontrado los siguientes errores que debes corregir:
+    -----------------------
+    documento_anterior:
+    {documento_anterior}
+    -----------------------
+    Escribe un informe final completo que contenga los elementos solicitados y que corrija los errores encontrados.
+    """
+    return instrucciones_lider_de_producto
+
+# Definicion del agente corrector Lider de producto
+corrector_documento_lider = Agent(
+    model="qwen2.5-coder:14b",
+    name="Agente Corrector Líder de Producto",
+    instructions=corrector_instrucciones_lider_de_producto
+)
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     # Ejemplo de requerimiento del cliente
     prompt = (
