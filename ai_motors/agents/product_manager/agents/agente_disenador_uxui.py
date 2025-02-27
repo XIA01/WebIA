@@ -34,8 +34,35 @@ disenador_uxui = Agent(
     instructions=instrucciones_disenador_uxui
 )
 
+def corrector_instrucciones_disenador_uxui(context_variables):
+    documento_anterior = context_variables.get("documento_anterior", "")
+    return f"""
+Eres un agente Diseñador UX/UI.
+
+Tu tarea era recibir el documento técnico generado por el Analista de Negocio y elaborar una propuesta de diseño que incluya:
+  - La estructura de la interfaz.
+  - Esquemas de cada pantalla.
+  - Flujos de usuario.
+  - Una guía de estilo que defina la apariencia y el comportamiento interactivo.
+
+El informe de diseño que enviaste previamente es:
+-----------------------
+{documento_anterior}
+-----------------------
+
+El informe fue revisado y se detectaron errores o inconsistencias en la propuesta.
+Corrige el informe de diseño para que cumpla con los requerimientos solicitados, asegurándote de que sea completo, claro y profesional.
+    """
+
+# Definición del agente Corrector para el Diseñador UX/UI
+corrector_documento_disenador = Agent(
+    model="qwen2.5-coder:14b",
+    name="Agente Corrector Diseñador UX/UI",
+    instructions=corrector_instrucciones_disenador_uxui
+)
+
 if __name__ == "__main__":
-    # Prueba independiente del agente con un documento técnico simulado
+    # Prueba independiente del Agente Diseñador UX/UI
     documento_tecnico = (
         "Documento técnico generado por el Analista de Negocio (simulado):\n"
         "Descripción de funcionalidades, flujos de interacción y criterios de aceptación..."
@@ -45,4 +72,12 @@ if __name__ == "__main__":
         messages=[{"role": "user", "content": documento_tecnico}],
         context_variables={}
     )
-    print(response.messages[-1]["content"])
+    print("Informe de Diseño Generado:\n", response.messages[-1]["content"])
+
+    # Prueba independiente del Agente Corrector para el Diseñador UX/UI
+    corrector_response = client.run(
+        agent=corrector_documento_disenador,
+        messages=[{"role": "user", "content": "El informe de diseño es confuso y omite algunos elementos esenciales."}],
+        context_variables={"documento_anterior": response.messages[-1]["content"]}
+    )
+    print("Informe de Diseño Corregido:\n", corrector_response.messages[-1]["content"])

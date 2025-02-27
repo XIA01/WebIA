@@ -1,5 +1,3 @@
-# ai_motors/agents/product_manager/agents/agente_analista_de_negocio.py
-
 from swarm import Agent, Swarm
 from openai import OpenAI
 
@@ -34,8 +32,33 @@ analista_de_negocio = Agent(
     instructions=instrucciones_analista_de_negocio
 )
 
+def corrector_instrucciones_analista_de_negocio(context_variables):
+    documento_anterior = context_variables.get("documento_anterior", "")
+    return f"""
+Eres un agente Analista de Negocio.
+
+Tu tarea era transformar el informe del Líder de Producto en un documento técnico detallado que incluya:
+  - Descripciones precisas de cada funcionalidad.
+  - Flujos de interacción.
+  - Criterios de aceptación medibles.
+
+El documento que enviaste previamente es:
+-----------------------
+{documento_anterior}
+-----------------------
+
+El informe fue revisado y se detectaron errores o inconsistencias.
+Corrige el documento para que cumpla con los requerimientos solicitados, asegurándote de que sea completo, claro y profesional.
+"""
+
+corrector_documento_analista = Agent(
+    model="qwen2.5-coder:14b",
+    name="Agente Corrector Analista de Negocio",
+    instructions=corrector_instrucciones_analista_de_negocio
+)
+
 if __name__ == "__main__":
-    # Prueba independiente del agente con un informe simulado
+    # Prueba independiente del Agente Analista de Negocio
     informe_inicial = (
         "Informe Inicial del Producto (simulado):\n"
         "Reunión y Agenda: ...\n"
@@ -48,4 +71,12 @@ if __name__ == "__main__":
         messages=[{"role": "user", "content": informe_inicial}],
         context_variables={}
     )
-    print(response.messages[-1]["content"])
+    print("Informe Técnico Generado:\n", response.messages[-1]["content"])
+
+    # Prueba independiente del Agente Corrector de Documento Técnico
+    corrector_response = client.run(
+        agent=corrector_documento_analista,
+        messages=[{"role": "user", "content": "El documento está incompleto y confuso."}],
+        context_variables={"documento_anterior": informe_inicial}
+    )
+    print("Documento Técnico Corregido:\n", corrector_response.messages[-1]["content"])
