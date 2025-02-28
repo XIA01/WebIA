@@ -38,7 +38,7 @@ def sellar(**kwargs):
     return "[Documento Sellado]"
 
 control_calidad = Agent(
-    model="qwen2.5-coder:7b",
+    model="qwen2.5-coder:14b",
     name="Agente Control de Calidad",
     instructions=instrucciones_control_calidad,
     functions=[sellar]

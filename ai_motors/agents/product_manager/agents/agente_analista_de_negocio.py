@@ -36,8 +36,8 @@ def corrector_instrucciones_analista_de_negocio(context_variables):
     documento_anterior = context_variables.get("documento_anterior", "")
     return f"""
 Eres un agente Analista de Negocio.
-
-Tu tarea era transformar el informe del Líder de Producto en un documento técnico detallado que incluya:
+Te estan diciendo los errores que comestiste, si el mensaje no tiene sentido simplemente devuelve el documento que enviaste previamente.
+Tu tarea era transformar el documento que enviaste previamente en un documento técnico detallado que incluya:
   - Descripciones precisas de cada funcionalidad.
   - Flujos de interacción.
   - Criterios de aceptación medibles.
@@ -52,7 +52,7 @@ Corrige el documento para que cumpla con los requerimientos solicitados, asegur�
 """
 
 corrector_documento_analista = Agent(
-    model="qwen2.5-coder:7b",
+    model="qwen2.5-coder:14b",
     name="Agente Corrector Analista de Negocio",
     instructions=corrector_instrucciones_analista_de_negocio
 )

@@ -33,7 +33,7 @@ Devuelve ÚNICAMENTE el documento final integrado, sin encabezados de “tools�
 """
 
 experto_documentacion = Agent(
-    model="qwen2.5-coder:7b",
+    model="qwen2.5-coder:14b",
     name="Agente Experto en Documentación",
     instructions=instrucciones_experto_documentacion
 )

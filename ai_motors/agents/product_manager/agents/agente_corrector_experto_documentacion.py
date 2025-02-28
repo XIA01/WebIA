@@ -29,7 +29,7 @@ Corrige el documento de modo que:
 """
 
 corrector_documento_experto = Agent(
-    model="qwen2.5-coder:7b",
+    model="qwen2.5-coder:14b",
     name="Agente Corrector Experto en Documentación",
     instructions=corrector_instrucciones_experto_documentacion
 )

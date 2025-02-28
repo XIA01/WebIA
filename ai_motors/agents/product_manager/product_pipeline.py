@@ -226,13 +226,15 @@ def run_product_pipeline(prompt: str) -> dict:
     doc_control.sellado_documentacion = False
     control_final_iter = 0
     conversation_history_documentacion = []
+    # copia del documento final para el control final
+    documento_final2 = documento_final
     while not doc_control.sellado_documentacion:
         control_final_iter += 1
         print(Fore.YELLOW + f"Control Final de Documentación - Iteración {control_final_iter}")
         resp_control_doc = client_control_doc.run(
             agent=control_documentacion,
             messages=[{"role": "user", "content": documento_final}],
-            context_variables={"documento_final": documento_final},
+            context_variables={"documento_final": documento_final2},
             model_override=None,
             execute_tools=True
         )
@@ -246,7 +248,7 @@ def run_product_pipeline(prompt: str) -> dict:
             resp_corrector = client_corrector_experto.run(
                 agent=corrector_documento_experto,
                 messages=history,
-                context_variables={"documento_anterior": documento_final},
+                context_variables={"documento_final": documento_final2},
                 model_override=None,
                 execute_tools=True
             )
@@ -279,7 +281,7 @@ def run_product_pipeline(prompt: str) -> dict:
 
 if __name__ == "__main__":
     ejemplo_prompt = (
-        "El cliente solicita una plataforma web para una IA que quiere ser presidente del mundo. "
+        "El cliente solicita una plataforma web para una especie extraterrestre parasita que quiero dominar el mundo, utilizan un lenguaje cuniforme para comunicarse, pero haz todo es español."
         "Se requiere un diseño moderno, intuitivo y accesible, con páginas completas para la campaña. "
         "El proyecto se realizará utilizando HTML, CSS y JavaScript."
     )
