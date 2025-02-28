@@ -29,7 +29,7 @@ def instrucciones_disenador_uxui(context_variables):
 
 # Definición del agente Diseñador UX/UI
 disenador_uxui = Agent(
-    model="qwen2.5-coder:14b",
+    model="qwen2.5-coder:7b",
     name="Agente Diseñador UX/UI",
     instructions=instrucciones_disenador_uxui
 )

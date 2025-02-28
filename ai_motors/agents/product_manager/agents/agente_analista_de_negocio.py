@@ -52,7 +52,7 @@ Corrige el documento para que cumpla con los requerimientos solicitados, asegur√
 """
 
 corrector_documento_analista = Agent(
-    model="qwen2.5-coder:14b",
+    model="qwen2.5-coder:7b",
     name="Agente Corrector Analista de Negocio",
     instructions=corrector_instrucciones_analista_de_negocio
 )

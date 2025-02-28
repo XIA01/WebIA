@@ -55,7 +55,7 @@ def corrector_instrucciones_lider_de_producto(context_variables):
 
 # Definicion del agente corrector Lider de producto
 corrector_documento_lider = Agent(
-    model="qwen2.5-coder:14b",
+    model="qwen2.5-coder:7b",
     name="Agente Corrector Líder de Producto",
     instructions=corrector_instrucciones_lider_de_producto
 )
