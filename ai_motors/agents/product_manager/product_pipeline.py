@@ -1,5 +1,7 @@
 import json
 from colorama import init, Fore, Style
+
+from bioinspired_pipeline import run_bioinspired_pipeline
 init(autoreset=True)
 
 import agents.agente_control_calidad as ac  # ac.sellado_lider se usa en los controles previos
@@ -270,7 +272,9 @@ def run_product_pipeline(prompt: str) -> dict:
         "=== Historial - Control Final de Documentación ===",
         "\n".join([msg["content"] for msg in conversation_history_documentacion])
     ])
-    
+    bp, log = run_bioinspired_pipeline(informe_lider, documento_tecnico, informe_disenio, documento_final)
+    print(Fore.CYAN + "blueprint:", bp)
+    print(Fore.CYAN + "log_creacion:", log)
     return {
         "informe_lider": informe_lider,
         "documento_tecnico": documento_tecnico,
